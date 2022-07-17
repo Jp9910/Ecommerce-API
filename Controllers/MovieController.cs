@@ -12,5 +12,9 @@ public class FilmeController : ControllerBase
     public void post([FromBody] Movie movie)
     {
         movies.Add(movie);
+        Console.WriteLine(movie.Title);
+        Console.WriteLine(movie.Director);
+        Console.WriteLine(movie.Genre);
+        Console.WriteLine(movie.Duration);
     }
 }
