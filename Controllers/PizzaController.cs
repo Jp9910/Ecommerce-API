@@ -38,8 +38,8 @@ public class PizzaController : ControllerBase
     {
         /*
          * Responds only to the HTTP GET verb, as denoted by the [HttpGet] attribute.
-         * Requires that the id parameter's value is included in the URL segment after pizza/. Remember, the controller-level
-         * [Route] attribute defined the /pizza pattern.
+         * >>> Requires that the id parameter's value is included in the URL segment after pizza/. (for example /pizza/3) <<<
+         * Remember, the controller-level [Route] attribute defined the /pizza pattern.
          * Queries the database for a pizza that matches the provided id parameter.
          */
         var pizza =  PizzaService.Get(id);
@@ -58,8 +58,55 @@ public class PizzaController : ControllerBase
     }
 
     // POST action
+    [HttpPost]
+    // Returns HTTP status code 201 (CreatedAtAction) if it succeeded. Assumes 400 (BadRequest) otherwise.
+    public IActionResult Create(Pizza pizza)
+    {
+        PizzaService.Add(pizza);
+        // The first parameter in the CreatedAtAction method call represents an action name. The nameof keyword
+        // is used to avoid hard-coding the action name. CreatedAtAction uses the action name to generate a 
+        // location HTTP response header with a URL to the newly created pizza, as explained in the previous unit.
+        return CreatedAtAction(
+            nameof(Create), // actionName: The name of the action to use for generating the URL.
+            new {id = pizza.Id}, // routeValues: The route data to use for generating the URL. (this should generate /Create/Id )
+            pizza // value: The content value to format in the entity body.
+        );
+    }
 
     // PUT action
+    [HttpPut("{id}")]
+    // Returns HTTP status code 204 (NoContent) if it succeeded. Assumes 400 (BadRequest) otherwise.
+    public IActionResult Update(int id, Pizza pizza)
+    {
+        // A PUT action takes an Id >> and a new object <<. The Id will be used to search for an existing object.
+        // If found, this object associated with the Id will be replaced the received object.
+        // So a PUT request needs to receive a new object and fully replace the existing one, unlike a PATCH request.
+
+        if (id != pizza.Id)
+            return BadRequest();
+        
+        var existingPizza = PizzaService.Get(id);
+        if (existingPizza == null)
+            return NotFound();
+        
+        PizzaService.Update(pizza);
+        return NoContent();
+
+        // Returns IActionResult because the ActionResult return type isn't known until runtime. 
+        // The BadRequest, NotFound, and NoContent methods return BadRequestResult, NotFoundResult,
+        // and NoContentResult types, respectively.
+    }
 
     // DELETE action
+    [HttpDelete("{id}")]
+    // Returns HTTP status code 204 (NoContent) if it succeeded. Assumes 400 (BadRequest) otherwise.
+    public IActionResult Delete(int id)
+    {
+        var existingPizza = PizzaService.Get(id);
+        if (existingPizza == null)
+            return NotFound();
+
+        PizzaService.Delete(id);
+        return NoContent();
+    }
 }
