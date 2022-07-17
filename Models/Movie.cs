@@ -5,6 +5,7 @@ namespace MoviesAPI.Models
 {
     public class Movie
     {
+        public int Id {get; set;}
         [Required(ErrorMessage = "The Title is required!")]
         public string Title {get; set;} = String.Empty;
         [StringLength(20, ErrorMessage = "The Genre can not have over 20 characters")]
