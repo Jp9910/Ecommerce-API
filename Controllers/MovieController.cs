@@ -4,17 +4,23 @@ using MoviesAPI.Models;
 
 [ApiController]
 [Route("[controller]")]
-public class FilmeController : ControllerBase
+public class MovieController : ControllerBase
 {
-    private List<Movie> movies = new List<Movie>();
+    private static List<Movie> movies = new List<Movie>();
 
     [HttpPost]
-    public void post([FromBody] Movie movie)
+    public void Create([FromBody] Movie movie)
     {
         movies.Add(movie);
         Console.WriteLine(movie.Title);
         Console.WriteLine(movie.Director);
         Console.WriteLine(movie.Genre);
         Console.WriteLine(movie.Duration);
+    }
+
+    [HttpGet]
+    public IEnumerable<Movie> GetAll()
+    {
+        return movies;
     }
 }
